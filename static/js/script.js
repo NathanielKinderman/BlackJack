@@ -9,8 +9,13 @@ const YOU= blackjackGame['you']
 const DEALER= blackjackGame['dealer']
 
 const hitSound= new Audio('static/sounds/swish.m4a')
+const winSound= new Audio('static/sounds/cash.mp3')
+const lossSound= new Audio('static/sounds/aww.mp3')
 
 document.querySelector('#blackjack-hit-button').addEventListener('click',blackjackHit);
+
+document.querySelector('#blackjack-stand-button').addEventListener('click',dealerLogic);
+
 document.querySelector('#blackjack-deal-button').addEventListener('click',blackjackDeal);
 
 function blackjackHit(){
@@ -83,4 +88,62 @@ function showScore(activePlayer){
     document.querySelector(activePlayer['scoreSpan']).textContent = activePlayer['score'];
     }
 
+}
+
+function dealerLogic(){
+    let card = randomCard();
+    showCard(card,YOU);
+    updateScore(card,YOU);
+    showScore();
+    showResults(computeWinner());
+}
+
+function computeWinner(){
+    let winner;
+
+    if(YOU['score'] <= 21){
+        if(YOU['score'] > DEALER['score'] || (DEALER['score'] >21)) {
+            console.log('You won')
+            winner = YOU;
+        }
+        else if(YOU['score'] < DEALER['score']){
+            console.log('You lost')
+            winner = DEALER;
+        }
+        else if(YOU['score'] === DEALER['score']){
+            console.log('You Tied')
+        }
+
+        else if(YOU['score'] > 21 && DEALER['score'] < 21){
+            console.log('you lost')
+            winner = DEALER;
+        }
+
+        else if(YOU['score'] >21 && DEALER['score'] < 21){
+            console.log('You Tied');
+        }
+
+    }
+    return winner;
+}
+
+function showResults(winner){
+    let message , messageColor;
+    if(winner === YOU){
+        message = 'You Won';
+        messageColor = 'green';
+        winSound.play();
+    }
+    else if(winner === DEALER){
+        message = 'You Lost';
+        messageColor = 'red';
+        lossSound.play();
+    }
+    else{
+        message = 'You Tied';
+        messageColor = 'black';
+    }
+
+    document.querySelector('#blackjack-results').textContent = message;
+    document.querySelector('#blackjack-results').style.color = messageColor;
 }
