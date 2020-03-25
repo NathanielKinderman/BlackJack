@@ -102,19 +102,26 @@ function showScore(activePlayer){
 
 }
 
-function dealerLogic(){
-    blackjackGame['isStand'] = true;
-    let card = randomCard();
-    showCard(card,YOU);
-    updateScore(card,YOU);
-    showScore();
-    showResults(computeWinner());
+function sleep(ms){
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
-    if (DEALER['score'] >15){
-        blackjackGame['turnsOver'] = true;
-        let winner = computeWinner();
-        showResults(winner);
+async  function dealerLogic(){
+    blackjackGame['isStand'] = true;
+
+    while(DEALER['score'] <16 && blackjackGame['isStand'] === true){
+        let card = randomCard();
+        showCard(card,YOU);
+        updateScore(card,YOU);
+        showScore(DEALER);
+        await sleep(1000);
     }
+
+        
+    blackjackGame['turnsOver'] = true;
+    let winner = computeWinner();
+    showResults(winner);   
+    
 }
 
 function computeWinner(){
